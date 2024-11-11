@@ -9,11 +9,7 @@ export const signUp = async (req, res) => {
 
         const body = JSON.parse(req?.body?.user);
 
-
-        console.log("body ===>", body);
         let { firstName, lastName, email, dateOfBirth, password } = body;
-
-        console.log("firstName ===>", firstName);
 
         if (!firstName || !lastName || !email || !dateOfBirth || !password) {
             throw new Error("All fields are required!")
@@ -42,12 +38,11 @@ export const signUp = async (req, res) => {
 
         res.status(201).json({ status: 201, message: "User Created successfully!" });
     } catch (error) {
-        console.log("req.file===>", req?.file)
-        if (req?.file) {
+              if (req?.file) {
             fs.unlinkSync(req?.file?.path);
         }
         console.log("Error in signUp controller", error);
-        res.status(500).send({ status: 500, error: error?.message })
+        res.status(500).send({ status: 500, message: error?.message })
     }
 }
 
