@@ -15,6 +15,7 @@ const authMiddleware = async (req: any, res: any, next: any) => {
             const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
             const { userId } = decoded;
             const user = await getUser({ _id: userId });
+            delete user?.password;
             req.user = user;
 
             next();
