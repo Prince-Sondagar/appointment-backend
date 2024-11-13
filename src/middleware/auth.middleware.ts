@@ -1,19 +1,20 @@
-import { findUser } from "../services/user.service.js";
-import jwt from 'jsonwebtoken'
 
-const authMiddleware = async (req, res, next) => {
+import jwt from 'jsonwebtoken'
+import { getUser } from '../services/user.service';
+
+const authMiddleware = async (req: any, res: any, next: any) => {
 
     if (req.headers && req.headers.authorization) {
         const token = req.headers.authorization.split(' ')[1];
-      
+
         if (!token) {
             return res.status(401).json({ message: 'Access denied. No token provided.' });
         }
 
         try {
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
             const { userId } = decoded;
-            const user = await findUser({ _id: userId });
+            const user = await getUser({ _id: userId });
             req.user = user;
 
             next();

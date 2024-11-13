@@ -1,8 +1,10 @@
-import AppointmentModel from "../models/appointment.model.js";
-import AppointmentServiceModel from "../models/appointmentService.model.js";
-import { getAppointment } from "../services/appointment.service.js";
+import AppointmentModel from "../models/appointment.model";
+import AppointmentServiceModel from "../models/appointmentService.model";
+import { getAppointment } from "../services/appointment.service";
 
-export const createAppointmentHandle = async (req, res) => {
+
+
+export const createAppointmentHandle = async (req: any, res: any) => {
     try {
         const { name, appointmentDate, startTime, endTime, status, serviceId, notes } = req?.body;
 
@@ -30,13 +32,13 @@ export const createAppointmentHandle = async (req, res) => {
         });
         await newAppointment.save();
         res.status(201).json({ message: "Appointment created successfully!" })
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ error: error?.message })
     }
 };
 
 
-export const createService = async (req, res) => {
+export const createService = async (req: any, res: any) => {
     try {
         const { name } = req?.body;
 
@@ -56,13 +58,13 @@ export const createService = async (req, res) => {
 
         res.status(200).json({ message: "service create successfully!" });
 
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ error: error?.message })
     }
 
 }
 
-export const getAllAppointments = async (req, res) => {
+export const getAllAppointments = async (req: any, res: any) => {
     try {
         const user = req.user;
         const body = req.body;
@@ -76,18 +78,18 @@ export const getAllAppointments = async (req, res) => {
 
         res.status(200).json({ appointments });
 
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).json({ error: error?.message })
     }
 }
 
-export const updateAppointmentHandler = async (req, res) => {
+export const updateAppointmentHandler = async (req: any, res: any) => {
     try {
-        const {  appointmentDate, startTime, endTime, status, serviceId, notes } = req?.body;
+        const { appointmentDate, startTime, endTime, status, serviceId, notes } = req?.body;
         const { appointmentId } = req.params;
 
         if (!appointmentDate || !startTime || !endTime || !status || !serviceId) {
-          return  res.status(400).json({ message: "All fields are required" });
+            return res.status(400).json({ message: "All fields are required" });
         }
 
         const appointment = await getAppointment({ _id: appointmentId });
@@ -100,7 +102,7 @@ export const updateAppointmentHandler = async (req, res) => {
 
         return res.status(200).json({ message: "Appointment updated successfully!", data: updatedAppointment });
 
-    } catch (error) {
-       return res.status(500).json({ error: error?.message })
+    } catch (error: any) {
+        return res.status(500).json({ error: error?.message })
     }
 };

@@ -1,21 +1,22 @@
 import bcrypt from 'bcrypt';
-import { findUser } from "../services/user.service.js";
-import UserModel from '../models/user.models.js';
 import fs from 'fs';
 import jwt from 'jsonwebtoken';
 
-export const signUp = async (req, res) => {
+import { getUser } from "../services/user.service";
+import UserModel from '../models/user.models';
+
+export const signUp = async (req: any, res: any) => {
     try {
 
         const body = JSON.parse(req?.body?.user);
 
-        let { firstName, lastName, email, dateOfBirth, password } = body;
+        let { firstName, lastName, email, dateOfBirth, password, gender, termsAndCondition } = body;
 
-        if (!firstName || !lastName || !email || !dateOfBirth || !password) {
+        if (!firstName || !lastName || !email || !dateOfBirth || !password || !gender || !termsAndCondition) {
             throw new Error("All fields are required!")
         }
 
-        const user = await findUser({ email });
+        const user = await getUser({ email });
 
         if (user) {
             throw new Error("User already exist");
@@ -30,6 +31,8 @@ export const signUp = async (req, res) => {
             lastName,
             email,
             dateOfBirth,
+            gender,
+            termsAndCondition,
             profileImage,
             password: hashedPassword,
         });
@@ -37,8 +40,8 @@ export const signUp = async (req, res) => {
         await newUser.save();
 
         res.status(201).json({ status: 201, message: "User Created successfully!" });
-    } catch (error) {
-              if (req?.file) {
+    } catch (error: any) {
+        if (req?.file) {
             fs.unlinkSync(req?.file?.path);
         }
         console.log("Error in signUp controller", error);
@@ -47,7 +50,7 @@ export const signUp = async (req, res) => {
 }
 
 
-export const SignIn = async (req, res) => {
+export const SignIn = async (req: any, res: any) => {
     try {
         const { email, password } = req?.body;
 
@@ -55,22 +58,22 @@ export const SignIn = async (req, res) => {
             throw new Error("All fields are required!");
         }
 
-        const user = await findUser({ email });
+        const user = await getUser({ email });
 
         if (!user) {
             return res.status(404).json({ message: "User not found" })
         }
 
-        const passwordMatch = await bcrypt.compare(password, user?.password);
+        const passwordMatch = await bcrypt.compare(password, user?.password as string);
 
         if (!passwordMatch) {
             return res.status(401).json({ message: "Invalid credentials" });
         }
 
-        const token = jwt.sign({ userId: user?._id, email: user?.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign({ userId: user?._id, email: user?.email }, process.env.JWT_SECRET as string, { expiresIn: '1h' });
 
         return res.status(200).json({ message: "SignIn Successfully!", token: token })
-    } catch (error) {
+    } catch (error: any) {
         res.status(500).send({ status: 200, message: error?.nessage })
     }
 }

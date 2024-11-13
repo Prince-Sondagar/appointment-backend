@@ -20,14 +20,14 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         require: true,
         trim: true,
-        set: (date) => {
+        set: (date: any) => {
             // Parse the date string to ensure time is ignored
-            return new Date(date.split('/').reverse().join('-')); 
+            return new Date(date.split('/').reverse().join('-'));
         }
     },
     profileImage: {
         type: String,
-        require:true
+        require: true
     },
     password: {
         type: String,
